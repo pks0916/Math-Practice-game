@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const {collect}=require('../dist/mistakes.js');
+const {summarize}=require('../dist/stats.js');
+const q={type:'addition',a:2,b:1,symbol:'+',answer:3,selected:4,flipped:true};
+const session=(id,difficulty,questions)=>({id,config:{difficulty},questions});
+const first=session('one','easy',[q,{...q},{...q,selected:3},{...q,flipped:false}]);
+const second=session('two','easy',[{...q,selected:2}]);
+const history=[first,second];
+assert.equal(collect(history).length,1);assert.equal(summarize(history).total.incorrect,3);
+assert.deepEqual(collect(JSON.parse(JSON.stringify(history))),collect(history));
+assert.equal(collect([...history,session('three','medium',[q])]).length,2);
+assert.equal(collect([...history,session('four','easy',[{...q,type:'subtraction',symbol:'−',answer:1}])]).length,2);
+assert.equal(collect([...history,first]).length,1);
+assert.equal(collect([session('correct','easy',[{...q,selected:3}])]).length,0);
+assert.deepEqual(collect([]),[]);
+assert.deepEqual(collect(history)[0],{key:JSON.stringify(['addition','easy',2,1]),type:'addition',difficulty:'easy',a:2,b:1,symbol:'+',answer:3,correctStreak:0});
+console.log('PASS: 3 wrong attempts become 1 saved mistake; correct/unflipped answers excluded, type and difficulty preserved, different types/levels stay separate, serialization restores the same list.');

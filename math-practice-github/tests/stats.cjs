@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');
+const {summarize}=require('../dist/stats.js');
+const q=(type,right,flipped=true)=>({type,answer:4,selected:right?4:3,flipped});
+const first={id:'one',config:{difficulty:'easy'},questions:[q('addition',true),q('addition',false),q('subtraction',true),q('subtraction',false),q('addition',true)]};
+const second={id:'two',config:{difficulty:'hard'},questions:[q('division',true),q('multiplication',false),q('division',true,false)]};
+let stats=summarize([first]);assert.deepEqual(stats.total,{attempted:5,correct:3,incorrect:2,accuracy:60});
+assert.deepEqual(stats.byType.addition,{attempted:3,correct:2,incorrect:1,accuracy:67});
+assert.deepEqual(stats.byType.subtraction,{attempted:2,correct:1,incorrect:1,accuracy:50});
+stats=summarize([first,second,first]);assert.deepEqual(stats.total,{attempted:7,correct:4,incorrect:3,accuracy:57});
+assert.equal(stats.byDifficulty.easy.attempted,5);assert.equal(stats.byDifficulty.hard.attempted,2);assert.equal(stats.byType.division.attempted,1);
+for(const group of [stats.byType,stats.byDifficulty])for(const key of ['attempted','correct','incorrect'])assert.equal(Object.values(group).reduce((sum,row)=>sum+row[key],0),stats.total[key]);
+assert.deepEqual(summarize([]).total,{attempted:0,correct:0,incorrect:0,accuracy:null});
+console.log('PASS known session: 5 attempted, 3 correct, 2 incorrect, 60%. Addition 2/3 = 67%; subtraction 1/2 = 50%.');
+console.log('PASS combined history: 7 attempted, 4 correct, 3 incorrect, 57%; unfinished picks excluded, repeated session IDs ignored, all breakdowns reconcile, empty history has zero counts and dash accuracy.');

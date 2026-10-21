@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fc">
+  <title>Math Practice</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #24304b; background: #f7f8fc; font-family: ui-rounded, "Arial Rounded MT Bold", system-ui, sans-serif; }
+    header { max-width: 1120px; margin: auto; padding: 28px 32px; display: flex; align-items: center; gap: 12px; font-size: 21px; font-weight: 750; }
+    .brand-icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: #5754ce; color: white; font-size: 29px; }
+    main { max-width: 1000px; margin: 55px auto 70px; padding: 0 28px; text-align: center; }
+    .symbols { display: flex; justify-content: center; gap: 12px; margin-bottom: 26px; }
+    .symbols span { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 17px; background: #eae8fc; color: #5754ce; font-size: 32px; font-weight: 700; }
+    .symbols span:nth-child(2) { background: #e0f1e9; color: #277452; }
+    .symbols span:nth-child(3) { background: #fff0d8; color: #93610e; }
+    .symbols span:nth-child(4) { background: #e1edfc; color: #356aa6; }
+    h1 { font-size: clamp(40px, 7vw, 62px); letter-spacing: -2px; line-height: 1.12; margin: 0 0 20px; }
+    .welcome { font-size: 23px; line-height: 1.6; margin: 0 auto; max-width: 620px; color: #59647b; }
+    .menu { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 45px; }
+    .menu a { display: block; text-decoration: none; font: inherit; color: inherit; background: white; border: 2px solid #e3e6ef; border-radius: 24px; padding: 28px 23px 24px; min-height: 228px; cursor: pointer; text-align: left; transition: transform .15s, border-color .15s; }
+    .menu a:hover { transform: translateY(-4px); border-color: #7774dc; }
+    .menu a:focus-visible, .back-link:focus-visible { outline: 4px solid #c78017; outline-offset: 5px; }
+    .menu .primary { background: #5754ce; color: white; border-color: #5754ce; }
+    .icon { display: grid; place-items: center; background: #f0effb; color: #5754ce; width: 52px; height: 52px; border-radius: 16px; margin-bottom: 22px; }
+    .primary .icon { color: white; background: #ffffff26; }
+    svg { width: 27px; height: 27px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .label { display: flex; align-items: center; justify-content: space-between; font-weight: 750; font-size: 27px; margin-bottom: 10px; }
+    .description { display: block; font-size: 18px; line-height: 1.5; color: #606b81; }
+    .primary .description { color: #f1f0ff; }
+    .status { display: inline-block; font-size: 14px; font-weight: 700; margin-top: 16px; padding: 5px 10px; border-radius: 8px; background: #f0effb; color: #4945a8; }
+    .primary .status { background: #ffffff; color: #4945a8; }
+    .note { color: #626d80; font-size: 17px; margin-top: 32px; }
+    .page-panel { max-width: 620px; margin: 40px auto; background: white; border: 2px solid #e3e6ef; border-radius: 24px; padding: 36px 24px; }
+    .page-panel p { font-size: 21px; line-height: 1.6; color: #59647b; }
+    .back-link { display: inline-block; margin-top: 16px; padding: 16px 24px; background: #5754ce; color: white; border-radius: 14px; font-size: 20px; font-weight: 700; text-decoration: none; }
+    fieldset { border: 0; padding: 0; margin: 24px 0; text-align: left; }
+    legend { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+    .choice { display: flex; align-items: center; gap: 12px; padding: 14px; margin: 8px 0; border: 2px solid #e3e6ef; border-radius: 12px; font-size: 20px; cursor: pointer; }
+    .choice:has(input:checked) { border-color: #5754ce; background: #f0effb; }
+    input { width: 22px; height: 22px; accent-color: #5754ce; flex-shrink: 0; }
+    button.back-link { border: 0; font-family: inherit; cursor: pointer; }
+    input:focus-visible, button:focus-visible { outline: 3px solid #c78017; outline-offset: 4px; }
+    .page-panel .error { color: #a32626; font-weight: 700; }
+    .plain-link { display: inline-block; color: #4945a8; margin: 22px 10px 0; font-size: 20px; }
+    .page-panel h1 { font-size: clamp(32px, 5vw, 46px); letter-spacing: -1px; }
+    #question-list { text-align: left; }
+    .question-prompt { font-size: clamp(32px, 7vw, 48px); text-align: center; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .choice:has(input:checked) { border-color: #5754ce; background: #e9e7ff; box-shadow: inset 0 0 0 1px #5754ce; }
+    .answer-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .answer-choices .choice { margin: 0; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .card-back { border: 2px solid #d9d6f9; background: #f6f5ff; border-radius: 20px; padding: 24px; animation: reveal .25s ease-out; }
+    .card-back h2 { font-size: 32px; }
+    .outcomes { display: flex; gap: 12px; }
+    .outcome { border: 2px solid #c5c9d3; border-radius: 12px; padding: 12px 20px; font: inherit; font-weight: 700; }
+    .outcome:disabled { opacity: 1; color: #59647b; background: #fff; }
+    .outcome.selected:disabled { background: #5754ce; color: white; border-color: #5754ce; }
+    progress { width: 100%; height: 18px; accent-color: #5754ce; margin-top: 16px; }
+    .session-score { font-weight: 700; }
+    @keyframes reveal { from { opacity: 0; transform: rotateY(-12deg); } to { opacity: 1; transform: rotateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .card-back { animation: none; } }
+    .summary-totals { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 23px; background: #f0effb; border-radius: 16px; padding: 24px; }
+    .summary-totals dd { margin: 0; text-align: right; font-weight: 750; }
+    .stats-row { border: 1px solid #e3e6ef; border-radius: 16px; padding: 16px; margin: 12px 0; text-align: left; min-width: 0; }
+    .stats-row h3 { font-size: 22px; overflow-wrap: anywhere; margin: 0 0 12px; }
+    .stats-row dl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 16px; margin: 0; font-size: 19px; }
+    .stats-row dt { overflow-wrap: anywhere; }
+    .stats-row dd { margin: 0; font-weight: 700; }
+    #mistakes-list { text-align: left; padding-left: 24px; font-size: 20px; }
+    #mistakes-list li { padding: 12px 0; overflow-wrap: anywhere; }
+    [hidden] { display: none !important; }
+    @media (max-width: 840px) { header { padding: 22px; } main { margin-top: 30px; padding: 0 20px; } .menu { grid-template-columns: 1fr; margin-top: 30px; gap: 14px; } .menu a { min-height: auto; padding: 22px; } .icon { margin-bottom: 15px; } .welcome { font-size: 20px; } }
+    @media (prefers-reduced-motion: reduce) { .menu a { transition: none; } .menu a:hover { transform: none; } }
+  </style>
+  <link rel="stylesheet" href="playful.css">
+</head>
+<body>
+  <header><span class="brand-icon" aria-hidden="true">+</span> Math Practice</header>
+  <main>
+    <p id="save-status" role="status"></p>
+    <section id="home-page" aria-labelledby="home-title">
+    <div class="symbols" aria-hidden="true"><span>+</span><span>−</span><span>×</span><span>÷</span></div>
+    <h1 id="home-title" tabindex="-1">Let’s practice math!</h1>
+    <p class="welcome">Welcome! A little practice goes a long way.<br>Ready to give it a try?</p>
+    <a id="resume-session" class="back-link" href="#/session" hidden>Continue saved session</a>
+    <nav class="menu" aria-label="Main menu">
+      <a class="primary" href="#/practice">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 10 7-10 7z"/></svg></span>
+        <span class="label">Practice <span aria-hidden="true">→</span></span>
+        <span class="description">Try some math, one card at a time.</span>
+        <span class="status">All four math types ready</span>
+      </a>
+      <a href="#/stats">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 19V12M12 19V5M19 19V9"/></svg></span>
+        <span class="label">Stats <span aria-hidden="true">→</span></span>
+        <span class="description">See your saved practice results.</span>
+      </a>
+      <a href="#/settings">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h6m4 0h6M4 17h10m4 0h2"/><circle cx="12" cy="7" r="2"/><circle cx="16" cy="17" r="2"/></svg></span>
+        <span class="label">Settings <span aria-hidden="true">→</span></span>
+        <span class="description">Choose your saved practice preferences.</span>
+      </a>
+    </nav>
+    <p class="note">Every question is a chance to learn.</p>
+    </section>
+    <section id="practice-page" class="page-panel" aria-labelledby="practice-title" hidden>
+      <h1 id="practice-title" tabindex="-1">Choose your practice</h1>
+      <p>Pick one or more math types. Choose all four for mixed practice.</p>
+      <p id="active-session-note" hidden>You have an unfinished session. Continue it below, or start a new session with these choices. Starting a new session keeps your recorded answers but replaces the session you can resume.</p>
+      <a id="setup-resume" class="back-link" href="#/session" hidden>Continue unfinished session</a>
+      <form id="practice-form" novalidate>
+        <fieldset aria-describedby="setup-error"><legend>Math types</legend>
+          <label class="choice"><input type="checkbox" name="mathType" value="addition"> Addition (+)</label>
+          <label class="choice"><input type="checkbox" name="mathType" value="subtraction"> Subtraction (−)</label>
+          <label class="choice"><input type="checkbox" name="mathType" value="multiplication"> Multiplication (×)</label>
+          <label class="choice"><input type="checkbox" name="mathType" value="division"> Division (÷)</label>
+        </fieldset>
+        <fieldset><legend>Difficulty and session length</legend>
+          <label class="choice"><input type="radio" name="difficulty" value="easy" checked> Easy · 5 questions</label>
+          <label class="choice"><input type="radio" name="difficulty" value="medium"> Medium · 10 questions</label>
+          <label class="choice"><input type="radio" name="difficulty" value="hard"> Hard · 20 questions</label>
+        </fieldset>
+        <p id="range-help"></p>
+        <p id="length-summary" aria-live="polite"></p>
+        <p id="setup-error" class="error" role="alert"></p>
+        <button class="back-link" type="submit">Start session</button>
+        <button id="review-start" class="back-link" type="submit" value="review" disabled>Review similar mistakes</button>
+        <p id="review-availability" role="status"></p>
+        <p>Review uses saved mistakes matching these math types and difficulty. It may be shorter if there aren’t enough different similar questions.</p>
+      </form>
+      <p>All four math types are ready to preview. Choose an answer and flip to check it. Each flipped card counts once in your session totals. Progress saves in this browser. Mistake practice is still unfinished.</p>
+      <a class="plain-link" href="#/">Back to home</a>
+    </section>
+    <section id="session-page" class="page-panel" aria-labelledby="session-title" hidden>
+      <h1 id="session-title" tabindex="-1">Your session</h1>
+      <p id="session-summary"></p>
+      <p id="session-status"></p>
+      <div id="question-list" tabindex="-1" aria-label="Question card"></div>
+      <a class="back-link" href="#/practice">Back to practice setup</a>
+      <a class="plain-link" href="#/">Back to home</a>
+    </section>
+    <section id="settings-page" class="page-panel" aria-labelledby="settings-title" hidden>
+      <h1 id="settings-title" tabindex="-1">Settings</h1>
+      <p>Choose the math types and difficulty for your next session. Changes save automatically in this browser. Your current session stays unchanged.</p>
+      <form id="settings-form">
+        <fieldset ><legend>Math types</legend>
+          <label class="choice"><input type="checkbox" name="defaultType" value="addition"> Addition (+)</label>
+          <label class="choice"><input type="checkbox" name="defaultType" value="subtraction"> Subtraction (−)</label>
+          <label class="choice"><input type="checkbox" name="defaultType" value="multiplication"> Multiplication (×)</label>
+          <label class="choice"><input type="checkbox" name="defaultType" value="division"> Division (÷)</label>
+        </fieldset>
+        <fieldset><legend>Difficulty and session length</legend>
+          <label class="choice"><input type="radio" name="defaultDifficulty" value="easy" checked> Easy · 5 questions</label>
+          <label class="choice"><input type="radio" name="defaultDifficulty" value="medium"> Medium · 10 questions</label>
+          <label class="choice"><input type="radio" name="defaultDifficulty" value="hard"> Hard · 20 questions</label>
+        </fieldset>
+      </form>
+      <p id="settings-feedback" role="status"></p>
+      <a class="back-link" href="#/practice">Go to practice</a>
+      <a class="plain-link" href="#/">Back to home</a>
+    </section>
+    <section id="stats-page" class="page-panel" aria-labelledby="stats-title" hidden>
+      <h1 id="stats-title" tabindex="-1">Your stats</h1>
+      <p>All recorded answers in this browser, including answers from unfinished sessions. Picks only count after flipping.</p>
+      <p id="stats-empty" hidden>No answers yet. Flip your first practice card to see your stats here.</p>
+      <div id="stats-content"></div>
+      <section aria-labelledby="mistakes-title">
+        <h2 id="mistakes-title">Saved mistakes</h2>
+        <p id="mistakes-count"></p>
+        <ul id="mistakes-list"></ul>
+        <a id="review-from-stats" class="back-link" href="#/practice" hidden>Practice saved mistakes</a>
+        <p>Wrong answers are saved automatically. Repeated mistakes appear once. Use Practice to review similar questions. A mistake leaves this list after two correct linked review answers in a row. A wrong review resets its streak; all attempts stay in Stats.</p>
+      </section>
+      <p>Accuracy = correct ÷ attempted, rounded to a whole percent. A dash means no answers yet.</p>
+      <a class="back-link" href="#/practice">Practice</a>
+      <a class="plain-link" href="#/">Back to home</a>
+    </section>
+    <section id="other-page" class="page-panel" aria-labelledby="page-title" hidden>
+      <h1 id="page-title" tabindex="-1"></h1>
+      <p id="page-message"></p>
+      <a class="back-link" href="#/">Back to home</a>
+    </section>
+  </main>
+  <script src="practice-config.js"></script>
+  <script src="questions.js"></script>
+  <script src="storage.js"></script>
+  <script src="stats.js"></script>
+  <script src="mistakes.js"></script>
+  <script src="review.js"></script>
+  <script src="navigation.js"></script>
+</body>
+</html>

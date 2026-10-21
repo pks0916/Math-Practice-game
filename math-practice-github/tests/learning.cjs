@@ -1,0 +1,18 @@
+const assert=require('node:assert/strict');
+const M=require('../dist/mistakes.js'),S=require('../dist/stats.js');
+const source={type:'addition',a:2,b:1,symbol:'+',answer:3,selected:4,flipped:true};
+const key=JSON.stringify(['addition','easy',2,1]);
+let sequence=0;
+const session=q=>({id:String(sequence++),config:{difficulty:'easy'},questions:[q]});
+const review=(correct,flipped=true)=>({...source,a:2,b:2,answer:4,selected:correct?4:5,sourceMistakeKey:key,flipped});
+const history=[session(source)];
+history.push(session(review(true)));assert.equal(M.collect(history).find(m=>m.key===key).correctStreak,1);
+history.push(session(review(true,false)));assert.equal(M.collect(history).find(m=>m.key===key).correctStreak,1);
+history.push(session(review(false)));assert.equal(M.collect(history).find(m=>m.key===key).correctStreak,0);
+history.push(session(review(true)));assert.equal(M.collect(history).find(m=>m.key===key).correctStreak,1);
+history.push(session(review(true)));assert(!M.collect(history).some(m=>m.key===key));
+assert.equal(S.summarize(history).total.attempted,5);assert.equal(S.summarize(history).total.correct,3);
+assert.deepEqual(M.collect(JSON.parse(JSON.stringify(history))),M.collect(history));
+assert.deepEqual(M.collect([...history,history.at(-1)]),M.collect(history));
+history.push(session({...source}));assert.equal(M.collect(history).find(m=>m.key===key).correctStreak,0);
+console.log('PASS: correct → 1/2; unflipped ignored; wrong → 0/2; two consecutive correct → learned; refresh and duplicate sessions unchanged; all five attempts retained; later wrong answer reopens mistake.');
